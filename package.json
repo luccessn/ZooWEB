@@ -1,0 +1,24 @@
+{
+  "name": "zooweb",
+  "version": "1.0.0",
+  "description": "lg\r gSH",
+  "scripts": {
+    "start-server": "cd  server && npm start",
+    "start-client": "cd front && npm start",
+    "start": "concurrently \"npm run start-server\" \"npm run start-client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luccessn/ZooWEB.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luccessn/ZooWEB/issues"
+  },
+  "homepage": "https://github.com/luccessn/ZooWEB#readme"
+}
