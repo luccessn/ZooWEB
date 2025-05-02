@@ -1,9 +1,11 @@
 import AppRoutes from "./AppRoutes";
 import "./App.css";
+import NavBar from "./Components/NavBar/NavBar";
 
 function App() {
   return (
-    <div>
+    <div className="h-[20000px]">
+      <NavBar />
       <AppRoutes />
     </div>
   );
