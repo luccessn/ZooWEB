@@ -1,6 +1,12 @@
 import React from "react";
-
+import { useNavigate } from 'react-router-dom'
 const LoginForm = () => {
+  const navigate = useNavigate();
+  const  signup = () =>{
+      navigate("/signup");
+  };
+ 
+  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form className="flex flex-col items-center gap-4 w-full max-w-sm">
@@ -50,9 +56,9 @@ const LoginForm = () => {
 
         <span className="text-gray-600">
           Don't have an account?{" "}
-          <a href="#" className="text-green-500">
+          <button onClick={signup} className="text-green-500">
             Sign up
-          </a>
+          </button>
         </span>
       </form>
     </div>
