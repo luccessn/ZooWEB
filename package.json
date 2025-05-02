@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "lg\r gSH",
   "scripts": {
-    "start-server": "cd  server && npm start",
+    "start-server": "cd server && npm start",
     "start-client": "cd front && npm start",
     "start": "concurrently \"npm run start-server\" \"npm run start-client\""
   },
