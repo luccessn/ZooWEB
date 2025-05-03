@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -11,6 +11,48 @@ import {
   Button,
 } from "@heroui/react";
 
+import { Dropdown } from "rsuite";
+import "rsuite/dist/rsuite-no-reset.min.css";
+import { useNavigate } from "react-router-dom";
+import { Routes } from "../../Constant/Route";
+import { NavLink } from "react-router-dom";
+// import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+export const UserIcon = ({
+  fill = "currentColor",
+  size,
+  height,
+  width,
+  ...props
+}) => {
+  return (
+    <svg
+      data-name="Iconly/Curved/Profile"
+      height={size || height || 24}
+      viewBox="0 0 24 24"
+      width={size || width || 24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g
+        fill="none"
+        stroke={fill}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+        strokeWidth={1.5}
+      >
+        <path
+          d="M11.845 21.662C8.153 21.662 5 21.088 5 18.787s3.133-4.425 6.845-4.425c3.692 0 6.845 2.1 6.845 4.4s-3.134 2.9-6.845 2.9z"
+          data-name="Stroke 1"
+        />
+        <path
+          d="M11.837 11.174a4.372 4.372 0 10-.031 0z"
+          data-name="Stroke 3"
+        />
+      </g>
+    </svg>
+  );
+};
 export const AcmeLogo = () => {
   return (
     <svg fill="none" height="36" viewBox="0 0 32 32" width="36">
@@ -23,10 +65,20 @@ export const AcmeLogo = () => {
     </svg>
   );
 };
-
+const CustomDropdown = ({ ...props }) => (
+  <Dropdown {...props}>
+    <Dropdown.Item>New File</Dropdown.Item>
+    <Dropdown.Item>New File with Current Profile</Dropdown.Item>
+    <Dropdown.Item>Download As...</Dropdown.Item>
+    <Dropdown.Item>Export PDF</Dropdown.Item>
+    <Dropdown.Item>Export HTML</Dropdown.Item>
+    <Dropdown.Item>Settings</Dropdown.Item>
+    <Dropdown.Item>About</Dropdown.Item>
+  </Dropdown>
+);
 export default function NavBar() {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
   const menuItems = [
     "Profile",
     "Dashboard",
@@ -55,25 +107,49 @@ export default function NavBar() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
-          </Link>
+          <NavLink
+            to={Routes.Home}
+            className={({ isActive }) =>
+              isActive ? "text-yellow-500 font-semibold" : "text-black"
+            }
+          >
+            მთავარი
+          </NavLink>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link aria-current="page" href="#">
+        <CustomDropdown title="Hover" trigger="hover" />
+        <NavbarItem>
+          <NavLink
+            to="/customers"
+            className={({ isActive }) =>
+              isActive ? "text-yellow-500 font-semibold" : "text-black"
+            }
+          >
             Customers
-          </Link>
+          </NavLink>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
-          </Link>
+          <NavLink
+            to="/inter"
+            className={({ isActive }) =>
+              isActive ? "text-yellow-500 font-semibold" : "text-black"
+            }
+          >
+            Inter
+          </NavLink>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
+          <Button
+            startContent={<UserIcon />}
+            variant="bordered"
+            className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg"
+            onPress={() => navigate(Routes.Login)}
+          >
+            შესვლა
+          </Button>
         </NavbarItem>
+
         <NavbarItem>
           <Button as={Link} color="primary" href="#" variant="flat">
             Sign Up
