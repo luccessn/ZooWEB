@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -7,52 +7,18 @@ import {
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
-  Link,
   Button,
 } from "@heroui/react";
-
-import { Dropdown } from "rsuite";
+import ArrowDownIcon from "@rsuite/icons/ArrowDown";
+import ArrowUpIcon from "@rsuite/icons/ArrowUp";
 import "rsuite/dist/rsuite-no-reset.min.css";
 import { useNavigate } from "react-router-dom";
 import { Routes } from "../../Constant/Route";
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { CustomDropdown, menuItems, UserIcon } from "./ConstantNavbar";
 // import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-export const UserIcon = ({
-  fill = "currentColor",
-  size,
-  height,
-  width,
-  ...props
-}) => {
-  return (
-    <svg
-      data-name="Iconly/Curved/Profile"
-      height={size || height || 24}
-      viewBox="0 0 24 24"
-      width={size || width || 24}
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <g
-        fill="none"
-        stroke={fill}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeMiterlimit={10}
-        strokeWidth={1.5}
-      >
-        <path
-          d="M11.845 21.662C8.153 21.662 5 21.088 5 18.787s3.133-4.425 6.845-4.425c3.692 0 6.845 2.1 6.845 4.4s-3.134 2.9-6.845 2.9z"
-          data-name="Stroke 1"
-        />
-        <path
-          d="M11.837 11.174a4.372 4.372 0 10-.031 0z"
-          data-name="Stroke 3"
-        />
-      </g>
-    </svg>
-  );
-};
+
 export const AcmeLogo = () => {
   return (
     <svg fill="none" height="36" viewBox="0 0 32 32" width="36">
@@ -65,32 +31,22 @@ export const AcmeLogo = () => {
     </svg>
   );
 };
-const CustomDropdown = ({ ...props }) => (
-  <Dropdown {...props}>
-    <Dropdown.Item>New File</Dropdown.Item>
-    <Dropdown.Item>New File with Current Profile</Dropdown.Item>
-    <Dropdown.Item>Download As...</Dropdown.Item>
-    <Dropdown.Item>Export PDF</Dropdown.Item>
-    <Dropdown.Item>Export HTML</Dropdown.Item>
-    <Dropdown.Item>Settings</Dropdown.Item>
-    <Dropdown.Item>About</Dropdown.Item>
-  </Dropdown>
-);
+
 export default function NavBar() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
-  ];
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [shouldRenderDropdown, setShouldRenderDropdown] = useState(false);
+  // აკონტროლებს unmount-ამდე დაგვიანებას
+  useEffect(() => {
+    if (isDropdownOpen) {
+      setShouldRenderDropdown(true);
+    } else {
+      const timer = setTimeout(() => setShouldRenderDropdown(false), 100); // უნდა ემთხვეოდეს animation-ის ხანგრძლივობას
+      return () => clearTimeout(timer);
+    }
+  }, [isDropdownOpen]);
 
   return (
     <Navbar shouldHideOnScroll onMenuOpenChange={setIsMenuOpen}>
@@ -110,36 +66,42 @@ export default function NavBar() {
           <NavLink
             to={Routes.Home}
             className={({ isActive }) =>
-              isActive ? "text-yellow-500 font-semibold" : "text-black"
+              isActive
+                ? "text-yellow-500 "
+                : "text-black hover:text-yellow-500 duration-250 "
             }
           >
             მთავარი
           </NavLink>
         </NavbarItem>
-        <CustomDropdown title="Hover" trigger="hover" />
+        <CustomDropdown trigger="hover" />
         <NavbarItem>
           <NavLink
-            to="/customers"
+            to={Routes.Contact}
             className={({ isActive }) =>
-              isActive ? "text-yellow-500 font-semibold" : "text-black"
+              isActive
+                ? "text-yellow-500 "
+                : "text-black hover:text-yellow-500 duration-250 "
             }
           >
-            Customers
+            კონტაქტი
           </NavLink>
         </NavbarItem>
         <NavbarItem>
           <NavLink
-            to="/inter"
+            to={Routes.About}
             className={({ isActive }) =>
-              isActive ? "text-yellow-500 font-semibold" : "text-black"
+              isActive
+                ? "text-yellow-500 "
+                : "text-black hover:text-yellow-500 duration-250 "
             }
           >
-            Inter
+            ჩვენს შესახებ
           </NavLink>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
+        <NavbarItem>
           <Button
             startContent={<UserIcon />}
             variant="bordered"
@@ -149,33 +111,66 @@ export default function NavBar() {
             შესვლა
           </Button>
         </NavbarItem>
+        <NavbarMenu>
+          {menuItems.map((item, index) => (
+            <NavbarMenuItem key={`${item.name}-${index}`} className="relative">
+              {item.submenu ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setIsDropdownOpen(!isDropdownOpen);
+                      setOpen(!open);
+                    }}
+                    className="w-full text-left text-black hover:text-yellow-500 duration-250 flex items-center gap-1"
+                  >
+                    {item.name} {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
+                  </button>
 
-        <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
-            Sign Up
-          </Button>
-        </NavbarItem>
+                  {shouldRenderDropdown && (
+                    <div
+                      className={`mt-2 bg-white rounded-md shadow-md z-10 transition-all transform origin-top
+                ${
+                  isDropdownOpen
+                    ? "animate-dropdown-in"
+                    : "animate-dropdown-out"
+                }`}
+                    >
+                      {item.submenu.map((subitem, subindex) => (
+                        <NavLink
+                          key={subindex}
+                          to={subitem.path}
+                          // className="block px-4 py-2 text-black hover:text-yellow-500 duration-250"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "text-yellow-500 block px-4 py-2 duration-250  "
+                              : "text-black hover:text-yellow-500 block px-4 py-2 duration-250"
+                          }
+                        >
+                          <div className="flex flex-row gap-2">
+                            <img src={subitem.img} alt="" className="w-5" />
+                            {subitem.name}
+                          </div>
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "text-yellow-500"
+                      : "text-black hover:text-yellow-500 duration-250"
+                  }
+                >
+                  {item.name}
+                </NavLink>
+              )}
+            </NavbarMenuItem>
+          ))}
+        </NavbarMenu>
       </NavbarContent>
-      <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
-              className="w-full"
-              color={
-                index === 2
-                  ? "primary"
-                  : index === menuItems.length - 1
-                  ? "danger"
-                  : "foreground"
-              }
-              href="#"
-              size="lg"
-            >
-              {item}
-            </Link>
-          </NavbarMenuItem>
-        ))}
-      </NavbarMenu>
     </Navbar>
   );
 }
