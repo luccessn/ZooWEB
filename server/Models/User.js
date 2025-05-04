@@ -33,5 +33,4 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-const UserModel = mongoose.model("users", UserSchema);
-module.exports = UserModel;
+module.exports = UserSchema; // ← აქ შეცვლილია!
