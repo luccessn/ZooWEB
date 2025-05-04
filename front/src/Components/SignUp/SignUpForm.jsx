@@ -1,9 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
+import { authHandler } from "../../Api/ApiAuth";
+import { authActions } from "../../Constant/auth/authActions";
+import { useNavigate } from "react-router-dom";
 
 const SignUpForm = () => {
+  const navigate = useNavigate();
+  const [user, setuser] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [ErrorInfo, setErrorInfo] = useState("");
+  const [isLoading, setisLoading] = useState(false);
+
+  const ChangeInput = (e) => {
+    const { name, value } = e.target;
+    setuser((prev) => ({ ...prev, [name]: value }));
+  };
+  const HandelSubmit = (e) => {
+    e.preventDefault();
+    setisLoading(true);
+
+    authHandler(authActions.signUp, user)
+      .then((user) => {
+        console.log(user);
+        navigate("/login", { state: { success: true } });
+      })
+      .catch((error) => {
+        setErrorInfo(error.message);
+      })
+      .finally(() => setisLoading(false));
+  };
+  if (ErrorInfo) {
+    return <div>Error : {ErrorInfo}</div>;
+  }
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form className="flex flex-col items-center gap-4 w-full max-w-sm">
+      <form
+        className="flex flex-col items-center gap-4 w-full max-w-sm"
+        onSubmit={HandelSubmit}
+      >
         {/* First Name */}
         <span className="w-full flex flex-col gap-2">
           <label
@@ -18,6 +57,7 @@ const SignUpForm = () => {
             id="firstName"
             className="w-full p-4 rounded-lg border-none bg-gray-300/40 outline outline-2 outline-gray-600 focus:outline-green-500"
             placeholder="Enter your first name"
+            onChange={ChangeInput}
           />
         </span>
 
@@ -35,6 +75,7 @@ const SignUpForm = () => {
             id="lastName"
             className="w-full p-4 rounded-lg border-none bg-gray-300/40 outline outline-2 outline-gray-600 focus:outline-green-500"
             placeholder="Enter your last name"
+            onChange={ChangeInput}
           />
         </span>
 
@@ -52,6 +93,7 @@ const SignUpForm = () => {
             id="email"
             className="w-full p-4 rounded-lg border-none bg-gray-300/40 outline outline-2 outline-gray-600 focus:outline-green-500"
             placeholder="Enter your email"
+            onChange={ChangeInput}
           />
         </span>
 
@@ -69,6 +111,7 @@ const SignUpForm = () => {
             id="password"
             className="w-full p-4 rounded-lg border-none bg-gray-300/40 outline outline-2 outline-gray-600 focus:outline-green-500"
             placeholder="Enter your password"
+            onChange={ChangeInput}
           />
         </span>
 
@@ -86,6 +129,7 @@ const SignUpForm = () => {
             id="confirmPassword"
             className="w-full p-4 rounded-lg border-none bg-gray-300/40 outline outline-2 outline-gray-600 focus:outline-green-500"
             placeholder="Repeat your password"
+            onChange={ChangeInput}
           />
         </span>
 
@@ -95,6 +139,11 @@ const SignUpForm = () => {
           value="sign up"
         />
       </form>
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+        </div>
+      )}
     </div>
   );
 };

@@ -35,21 +35,29 @@ app.get("/", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: "Email and password are required." });
+  }
+
   UserModel.findOne({ email: email })
     .then(async (user) => {
-      if (user) {
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (isMatch) {
-          res.json({ message: "Success", user });
-        } else {
-          res.json("The Password is incorrect");
-        }
-      } else {
-        res.json("Account Not Exists");
+      if (!user) {
+        return res.status(404).json({ message: "Account does not exist." });
       }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Incorrect password." });
+      }
+
+      // წარმატებული ავტორიზაცია
+      return res.status(200).json({ message: "Success", user });
     })
     .catch((error) => {
-      res.status(500).json({ message: "An Error Occurred", error });
+      console.error("Login error:", error);
+      return res.status(500).json({ message: "An error occurred", error });
     });
 });
 
