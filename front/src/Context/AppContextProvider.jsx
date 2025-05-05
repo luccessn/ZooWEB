@@ -8,16 +8,20 @@ import React, {
 import { initials, reducer } from "./Reducer";
 import { isTokenValid, toggleLocalStorage } from "../Utils/jwt";
 import { authenticatedAction } from "./AppActionsCreator";
+import { jwtDecode } from "jwt-decode"; // აქ არის jwt-decode
 
 const context = createContext();
 const AppContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initials);
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
+
     if (token && isTokenValid(token)) {
-      dispatch(authenticatedAction(token));
+      const decoded = jwtDecode(token); // ტოკენის დეცოდირება
+      console.log("Decoded Token:", decoded);
+      dispatch(authenticatedAction(decoded)); // ტოკენიდან გამოვყავით user-ი და გავგზავნეთ დისპეჩერში
     } else if (token && !isTokenValid(token)) {
-      toggleLocalStorage();
+      toggleLocalStorage(); // თუ ტოკენი არ ვარგა, წავშალოთ იგი
     }
   }, []);
 

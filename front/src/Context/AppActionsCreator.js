@@ -1,9 +1,11 @@
 import { appActions } from "./AppActions";
 
-export const authenticatedAction = (token) => {
-  return { type: appActions.AUTHENTICATED, payload: token };
+export const authenticatedAction = (decoded) => {
+  return {
+    type: appActions.AUTHENTICATED,
+    payload: decoded, // პირდაპირ გადავცემთ decoded, რომელიც მოიცავს user-ი
+  };
 };
-
 export const loginAction = (data) => {
   return { type: appActions.LOG_IN, payload: data };
 };

@@ -5,6 +5,7 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const UserSchema = require("./Models/User");
 const CvImagesSchema = require("./Models/Images/cvImages");
+const jwt = require("jsonwebtoken");
 // const UserModel = require("./Models/User");
 const app = express();
 app.use(express.json());
@@ -24,6 +25,7 @@ const imageDb = mongoose.createConnection(process.env.MONGO_URI2, {
 const UserModel = userDb.model("users", UserSchema);
 const CvImagesModel = imageDb.model("coverimages", CvImagesSchema);
 
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
 // ტესტის route
 app.get("/", (req, res) => {
   res.send(
@@ -32,8 +34,9 @@ app.get("/", (req, res) => {
 });
 
 // Login
+// Login
 app.post("/login", (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, firstName } = req.body;
 
   if (!email || !password) {
     return res
@@ -52,8 +55,24 @@ app.post("/login", (req, res) => {
         return res.status(401).json({ message: "Incorrect password." });
       }
 
+      // ✅ აქ გენერირდება ტოკენი
+      const payload = {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      };
+
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "12h",
+      });
+
       // წარმატებული ავტორიზაცია
-      return res.status(200).json({ message: "Success", user });
+      return res.status(200).json({
+        message: "Success",
+        token, // 🟢 frontend-ს ტოკენი
+        user: payload, // 🟢 საჭირო ინფო თუ გინდა გადაეცეს
+      });
     })
     .catch((error) => {
       console.error("Login error:", error);
@@ -107,7 +126,6 @@ app.get("/getcvImages", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 // პორტი
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

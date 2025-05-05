@@ -11,13 +11,13 @@ export const reducer = (state, action) => {
   const { type, payload } = action;
   switch (type) {
     case appActions.AUTHENTICATED:
-      const user = jwtDecode(payload);
-      return { ...state, isAuthanticated: true, user: user };
+      console.log("Authenticated Payload:", payload); // ნახე, რას იღებ
+      return { ...state, isAuthanticated: true, user: payload }; // აქ უკვე გადააქვს მთლიანი user
     case appActions.LOG_IN: {
       const { token } = payload;
       const user = jwtDecode(token);
       toggleLocalStorage(token);
-      return { ...state, isAuthanticated: true, user };
+      return { ...state, isAuthanticated: true, user: user }; // თუ ტოკენში არის user
     }
     case appActions.LOG_OUT:
       toggleLocalStorage();

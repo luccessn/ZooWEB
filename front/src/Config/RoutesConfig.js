@@ -10,10 +10,10 @@ import CatMain from "../Pages/Products/CatMain";
 import FishMain from "../Pages/Products/FishMain";
 import BirdMain from "../Pages/Products/BirdMain";
 import MouseMain from "../Pages/Products/MouseMain";
-// import AuthGuard from "../Guard/AuthGuard";
+import AuthGuard from "../Guard/AuthGuard";
 
 export const routesConfig = [
-  { path: Routes.Home, Component: Home },
+  { path: Routes.Home, Component: Home, Guard: AuthGuard },
   { path: Routes.Login, Component: Login },
   { path: Routes.Signup, Component: Signup },
   { path: Routes.Contact, Component: ContactUs },

@@ -25,15 +25,15 @@ const LoginForm = () => {
     e.preventDefault();
     setisLoading(true);
     authHandler(authActions.login, user)
-      .then((user) => {
-        if (user.message === "Success") {
+      .then((response) => {
+        if (response.message === "Success") {
           navigate("/", { state: { success: true } });
-          dispatch(loginAction(user.user));
+          dispatch(loginAction(response));
         }
 
-        console.log(user.user);
+        console.log(response.user);
 
-        console.log(user);
+        console.log(response);
       })
       .catch((err) => {
         setErrorInfo(err.message);

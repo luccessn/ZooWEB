@@ -6,6 +6,19 @@ const AppRoutes = () => {
   return (
     <Routes>
       {routesConfig.map((route) => {
+        if (route.Guard) {
+          return (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                <route.Guard>
+                  <route.Component />
+                </route.Guard>
+              }
+            />
+          );
+        }
         return (
           <Route
             key={route.path}

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema({
@@ -10,21 +9,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  token: {
-    type: String,
-    default: function () {
-      const payload = {
-        id: this._id,
-        name: this.name,
-        lastname: this.lastname,
-        email: this.email,
-      };
-
-      return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
-    },
-  },
 });
-// პაროლის ჰეშირება რეგისტრაციამდე
+
+// პაროლის ჰეშირება
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -33,4 +20,27 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-module.exports = UserSchema; // ← აქ შეცვლილია!
+module.exports = UserSchema;
+
+// const UserSchema = new mongoose.Schema({
+//   firstName: String,
+//   lastName: String,
+//   email: String,
+//   password: {
+//     type: String,
+//     required: true,
+//   },
+//   token: {
+//     type: String,
+//     default: function () {
+//       const payload = {
+//         id: this._id,
+//         name: this.name,
+//         lastname: this.lastname,
+//         email: this.email,
+//       };
+
+//       return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+//     },
+//   },
+// });
