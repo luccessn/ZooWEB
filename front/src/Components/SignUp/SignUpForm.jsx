@@ -16,7 +16,7 @@ const SignUpForm = () => {
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [ErrorInfo, setErrorInfo] = useState("");
+  // const [ErrorInfo, setErrorInfo] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const ChangeInput = (e) => {
@@ -57,17 +57,20 @@ const SignUpForm = () => {
     setIsLoading(true);
     authHandler(authActions.signUp, user)
       .then(() => navigate("/login", { state: { success: true } }))
-      .catch((error) => setErrorInfo(error.message))
+      .catch((error) =>
+        setFormErrors({ general: error.message || "რაღაც შეცდომა მოხდა" })
+      )
       .finally(() => setIsLoading(false));
   };
 
   const login = () => navigate("/login");
 
-  if (ErrorInfo) return <div>Error: {ErrorInfo}</div>;
-
   return (
     <div className="login-container flex justify-center items-center min-h-screen">
-      <div className="absolute w-[90%] max-w-[300px] z-10 p-6 rounded-3xl bg-[#1f293a] text-white flex flex-col items-center space-y-4 shadow-lg">
+      <form
+        onSubmit={handleSubmit}
+        className="absolute w-[90%] max-w-[300px] z-10 p-6 rounded-3xl bg-[#1f293a] text-white flex flex-col items-center space-y-4 shadow-lg"
+      >
         <h2 className="text-xl font-bold text-cyan-400">რეგისტრაცია</h2>
 
         <div className="w-full relative">
@@ -146,19 +149,22 @@ const SignUpForm = () => {
           >
             {showConfirmPassword ? "🙈" : "👁️"}
           </button>
-          {formErrors.confirmPassword && (
-            <p className="text-red-400 text-xs mt-1">
-              {formErrors.confirmPassword}
-            </p>
-          )}
         </div>
+        {formErrors.confirmPassword && (
+          <p className="text-red-400 text-xs mt-1">
+            {formErrors.confirmPassword}
+          </p>
+        )}
 
-        <button
-          onClick={handleSubmit}
-          className="bg-cyan-400 text-black font-semibold px-6 py-2 rounded-full hover:bg-cyan-300 transition"
-        >
+        <button className="bg-cyan-400 text-black font-semibold px-6 py-2 rounded-full hover:bg-cyan-300 transition">
           დარეგისტრირება
         </button>
+
+        {formErrors.general && (
+          <p className="text-red-400 text-sm mt-2 text-center">
+            {formErrors.general}
+          </p>
+        )}
 
         <span className="text-sm text-cyan-300 text-center">
           უკვე გაქვს ანგარიში?
@@ -166,8 +172,7 @@ const SignUpForm = () => {
             შესვლა
           </button>
         </span>
-      </div>
-
+      </form>
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>

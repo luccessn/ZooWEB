@@ -17,7 +17,6 @@ const LoginForm = () => {
 
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const [ErrorInfo, setErrorInfo] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const ChangeInput = (e) => {
@@ -56,17 +55,18 @@ const LoginForm = () => {
           dispatch(loginAction(response));
         }
       })
-      .catch((err) => setErrorInfo(err.message))
+      .catch((err) => setFormErrors({ general: err.message }))
       .finally(() => setIsLoading(false));
   };
 
   const signup = () => navigate("/signup");
 
-  if (ErrorInfo) return <div>Error: {ErrorInfo}</div>;
-
   return (
     <div className="login-container flex justify-center items-center min-h-screen  bg-[#1f293a]">
-      <div className="absolute w-[90%] max-w-[300px] z-10 p-6 rounded-full bg-transparent text-white flex flex-col items-center space-y-4 shadow-lg">
+      <form
+        onSubmit={HandelSubmit}
+        className="absolute w-[90%] max-w-[300px] z-10 p-6 rounded-full bg-transparent text-white flex flex-col items-center space-y-4 shadow-lg"
+      >
         <h2 className="text-xl font-bold text-cyan-400">შესვლა</h2>
 
         {/* Email */}
@@ -103,15 +103,16 @@ const LoginForm = () => {
             <p className="text-red-400 text-xs mt-1">{formErrors.password}</p>
           )}
         </div>
-
+        {formErrors.general && (
+          <p className="text-red-400 text-sm mt-2 text-center">
+            {formErrors.general}
+          </p>
+        )}
         <span className="text-sm text-cyan-300 cursor-pointer hover:underline">
           დაგავიწყდა პაროლი?
         </span>
 
-        <button
-          onClick={HandelSubmit}
-          className="bg-cyan-400 text-black font-semibold px-6 py-2 rounded-full hover:bg-cyan-300 transition"
-        >
+        <button className="bg-cyan-400 text-black font-semibold px-6 py-2 rounded-full hover:bg-cyan-300 transition">
           შესვლა
         </button>
 
@@ -121,7 +122,7 @@ const LoginForm = () => {
             დარეგისტრირდი
           </button>
         </span>
-      </div>
+      </form>
 
       <div className="login-animation">
         {[...Array(50)].map((_, i) => (

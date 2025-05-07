@@ -47,12 +47,14 @@ app.post("/login", (req, res) => {
   UserModel.findOne({ email: email })
     .then(async (user) => {
       if (!user) {
-        return res.status(404).json({ message: "Account does not exist." });
+        return res
+          .status(404)
+          .json({ message: "აქაუნთი არ არსებობს ან არასწორი მონაცემებია" });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(401).json({ message: "Incorrect password." });
+        return res.status(401).json({ message: "არასწორი პაროლია" });
       }
 
       // ✅ აქ გენერირდება ტოკენი
@@ -87,9 +89,10 @@ app.post("/register", (req, res) => {
   UserModel.findOne({ email: email })
     .then((existingUser) => {
       if (existingUser) {
-        return res
-          .status(400)
-          .json({ message: "The email you are using is already in use" });
+        return res.status(400).json({
+          message:
+            "ემაილს რომელსაც იყენებთ უკვე გამოყენებულია. გთხოვთ გამოიყენოთ სხვა ემაილი",
+        });
       } else {
         UserModel.create(req.body)
           .then((newUser) => {
