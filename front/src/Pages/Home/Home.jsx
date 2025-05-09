@@ -1,6 +1,7 @@
 import React from "react";
 import { useAppContext } from "../../Context/AppContextProvider";
 import { logOutAction } from "../../Context/AppActionsCreator";
+import SalesProducts from "../../Components/Home/SalesProducts";
 const Home = () => {
   const { state, dispatch } = useAppContext();
   console.log(state);
@@ -14,6 +15,7 @@ const Home = () => {
         {state.user ? state.user.email : "alo"}
       </h1>
       <button onClick={logout}>LogOut</button>
+      <SalesProducts />
     </div>
   );
 };

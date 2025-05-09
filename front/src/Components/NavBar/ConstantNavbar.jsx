@@ -1,23 +1,71 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Dropdown } from "rsuite";
 import { Routes } from "../../Constant/Route";
 import ArrowDownIcon from "@rsuite/icons/ArrowDown";
 import ArrowUpIcon from "@rsuite/icons/ArrowUp";
 import { NavLink } from "react-router-dom";
 
+const categoryList = [
+  {
+    name: "ძაღლი",
+    path: Routes.Dog,
+    img: "https://i.postimg.cc/5ySjQbXW/dog.png",
+    subcategories: [
+      { name: "მშრალი საკვები", path: "/dog/dry-food" },
+      { name: "სველი საკვები", path: "/dog/wet-food" },
+      { name: "სათამაშოები", path: "/dog/toys" },
+    ],
+  },
+  {
+    name: "კატა",
+    path: Routes.Cat,
+    img: "https://i.postimg.cc/HW9L2Wkf/cat.png",
+    subcategories: [
+      { name: "მშრალი საკვები", path: "/cat/dry-food" },
+      { name: "სველი საკვები", path: "/cat/wet-food" },
+      { name: "სათამაშოები", path: "/cat/toys" },
+    ],
+  },
+  {
+    name: "თევზი",
+    path: Routes.Fish,
+    img: "https://i.postimg.cc/J47zdwyt/clown-fish.png",
+    subcategories: [
+      { name: "საკვები", path: "/fish/food" },
+      { name: "აქსესუარები", path: "/fish/accessories" },
+    ],
+  },
+  {
+    name: "ფრინველი",
+    path: Routes.Bird,
+    img: "https://i.postimg.cc/9f9mqCkg/parrot.png",
+    subcategories: [
+      { name: "საკვები", path: "/bird/food" },
+      { name: "სათამაშოები", path: "/bird/toys" },
+    ],
+  },
+  {
+    name: "მღრღნელი",
+    path: Routes.Mouse,
+    img: "https://i.postimg.cc/rmL817XV/hamster.png",
+    subcategories: [
+      { name: "საკვები", path: "/mouse/food" },
+      { name: "დასადგომი", path: "/mouse/housing" },
+    ],
+  },
+];
+
 export const CustomDropdown = ({ ...props }) => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const dropdownRoutes = [
-    Routes.Dog,
-    Routes.Cat,
-    Routes.Fish,
-    Routes.Bird,
-    Routes.Mouse,
-  ];
-  const isActive = dropdownRoutes.includes(location.pathname);
-  // className="cursor-pointer  text-black hover:text-yellow-500 duration-250"
+  const navigate = useNavigate();
+
+  const activePaths = categoryList.map((c) => c.path);
+  const isActive = activePaths.some((path) =>
+    location.pathname.startsWith(path)
+  );
+
   return (
     <Dropdown
       {...props}
@@ -27,7 +75,7 @@ export const CustomDropdown = ({ ...props }) => {
         <span
           ref={ref}
           {...props}
-          className={`  cursor-pointer duration-250 flex items-center gap-1 ${
+          className={`cursor-pointer duration-250 flex items-center gap-1 ${
             isActive ? "text-yellow-500" : "text-black hover:text-yellow-500"
           }`}
         >
@@ -35,75 +83,32 @@ export const CustomDropdown = ({ ...props }) => {
         </span>
       )}
     >
-      <Dropdown.Item>
-        <NavLink to={Routes.Dog}>
-          <div className="flex flex-row gap-2">
-            <img
-              src="https://i.postimg.cc/5ySjQbXW/dog.png"
-              border="0"
-              alt="dog"
-              className="w-5"
-            />
-            ძაღლი
-          </div>
-        </NavLink>
-      </Dropdown.Item>
-      <Dropdown.Item>
-        <NavLink to={Routes.Cat}>
-          <div className="flex flex-row gap-2">
-            <img
-              src="https://i.postimg.cc/HW9L2Wkf/cat.png"
-              border="0"
-              alt="cat"
-              className="w-5"
-            />
-            კატა
-          </div>
-        </NavLink>
-      </Dropdown.Item>
-      <Dropdown.Item>
-        <NavLink to={Routes.Fish}>
-          <div className="flex flex-row gap-2">
-            <img
-              src="https://i.postimg.cc/J47zdwyt/clown-fish.png"
-              border="0"
-              alt="fish"
-              className="w-5"
-            />
-            თევზი
-          </div>
-        </NavLink>
-      </Dropdown.Item>
-      <Dropdown.Item>
-        <NavLink to={Routes.Bird}>
-          <div className="flex flex-row gap-2">
-            <img
-              src="https://i.postimg.cc/9f9mqCkg/parrot.png"
-              border="0"
-              alt="fish"
-              className="w-5"
-            />
-            ფრინველი
-          </div>
-        </NavLink>
-      </Dropdown.Item>
-      <Dropdown.Item>
-        <NavLink to={Routes.Mouse}>
-          <div className="flex flex-row gap-2 w-[150px]">
-            <img
-              src="https://i.postimg.cc/rmL817XV/hamster.png"
-              border="0"
-              alt="fish"
-              className="w-5"
-            />
-            მღრღნელი
-          </div>
-        </NavLink>
-      </Dropdown.Item>
+      <div className="w-40">
+        {categoryList.map((category) => (
+          <Dropdown.Menu
+            key={category.name}
+            title={
+              <NavLink
+                className="flex items-center gap-2 cursor-pointer hover:text-yellow-500"
+                to={category.path}
+              >
+                <img src={category.img} alt={category.name} className="w-5" />
+                {category.name}
+              </NavLink>
+            }
+            className="w-40"
+          >
+            {category.subcategories.map((sub) => (
+              <Dropdown.Item key={sub.path} as={NavLink} to={sub.path}>
+                {sub.name}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        ))}
+      </div>
     </Dropdown>
   );
 };
-//
 //
 //User Logo
 export const UserIcon = ({

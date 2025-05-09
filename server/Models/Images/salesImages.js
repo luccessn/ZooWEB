@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const CvImagesSchema = new mongoose.Schema({
+const SLImagesSchema = new mongoose.Schema({
   id: String, // ← ეს უნდა იყოს
   name: String,
   descr: String,
@@ -16,4 +16,4 @@ const CvImagesSchema = new mongoose.Schema({
   member: String,
 });
 
-module.exports = CvImagesSchema; // ← აქაც მხოლოდ სქემა
+module.exports = SLImagesSchema; // ← აქაც მხოლოდ სქემა

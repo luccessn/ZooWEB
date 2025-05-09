@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const UserSchema = require("./Models/User");
-const CvImagesSchema = require("./Models/Images/cvImages");
+const SLImagesSchema = require("./Models/Images/salesImages");
 const jwt = require("jsonwebtoken");
 // const UserModel = require("./Models/User");
 const app = express();
@@ -12,18 +12,18 @@ app.use(express.json());
 app.use(cors());
 
 // ჯერ შექმნე კავშირები სინქრონულად
-const userDb = mongoose.createConnection(process.env.MONGO_URI, {
+const userDb = mongoose.createConnection(process.env.MONGO_URI_USER, {
   serverSelectionTimeoutMS: 50000,
 });
 
-const imageDb = mongoose.createConnection(process.env.MONGO_URI2, {
+const salesDb = mongoose.createConnection(process.env.MONGO_URI_SALES, {
   serverSelectionTimeoutMS: 50000,
 });
 
 // შემდეგ გამოიძახე მოდელები
 
 const UserModel = userDb.model("users", UserSchema);
-const CvImagesModel = imageDb.model("coverimages", CvImagesSchema);
+const SLImagesModel = salesDb.model("ფასდაკლებები", SLImagesSchema);
 
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
 // ტესტის route
@@ -111,18 +111,18 @@ app.post("/register", (req, res) => {
 });
 
 // CV Images
-app.get("/getcvImages", async (req, res) => {
+app.get("/getSales", async (req, res) => {
   const id = req.query.id;
 
   try {
     if (id) {
-      const image = await CvImagesModel.findOne({ id: id });
+      const image = await SLImagesModel.findOne({ id: id });
       if (!image) {
         return res.status(404).json({ error: "პროდუქტი ვერ მოიძებნა" });
       }
       return res.json(image);
     } else {
-      const allImages = await CvImagesModel.find();
+      const allImages = await SLImagesModel.find();
       return res.json(allImages);
     }
   } catch (err) {
